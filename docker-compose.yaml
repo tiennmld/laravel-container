@@ -1,0 +1,48 @@
+services:
+  nginx:
+    image: "nginx:$NGINX_VERSION"
+    ports:
+      - "8081:80"
+    volumes:
+      - app-data:/laravel-app
+      - ./templates:/etc/nginx/templates
+      - ./templates/nginx.conf:/etc/nginx/nginx.conf
+      - ./templates/info.php:/laravel-app/public/info.php
+    networks:
+      - app-networks
+
+  phpfpm:
+    build: 
+      context: ./phpfpm
+      args:
+        - PHP_FPM_VERSION=${PHP_FPM_VERSION}
+    expose:
+      - 9000
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=${APP_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - app-data:/laravel-app
+      - ./templates/info.php:/laravel-app/public/info.php
+      # - app-logs:/laravel-app/public/storage
+    networks:
+      - app-networks
+
+  mysql:
+    image: "mysql:$MYSQL_VERSION"
+    expose:
+      - 3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${APP_DATABASE}
+    networks:
+      - app-networks
+
+networks:
+  app-networks:
+    driver: bridge
+volumes:
+  app-data:
+    external: true
