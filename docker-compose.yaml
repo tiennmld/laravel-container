@@ -26,7 +26,7 @@ services:
     volumes:
       - app-data:/laravel-app
       - ./templates/info.php:/laravel-app/public/info.php
-      # - app-logs:/laravel-app/public/storage
+      - app-logs:/laravel-app/public/storage/logs
     networks:
       - app-networks
 
@@ -45,4 +45,6 @@ networks:
     driver: bridge
 volumes:
   app-data:
+    external: true
+  app-logs:
     external: true

@@ -1,5 +1,15 @@
 # Laravel application container
 
+- [Laravel application container](#laravel-application-container)
+  - [Chuẩn bị Laravel source code](#chuẩn-bị-laravel-source-code)
+    - [Chuẩn bị php và composer](#chuẩn-bị-php-và-composer)
+    - [Chuẩn bị docker volume](#chuẩn-bị-docker-volume)
+    - [Tạo project laravel](#tạo-project-laravel)
+  - [Chuẩn bị docker-compose file](#chuẩn-bị-docker-compose-file)
+    - [Một số lưu ý](#một-số-lưu-ý)
+  - [Khởi động ứng dụng](#khởi-động-ứng-dụng)
+  - [Kiểm tra kết nối database từ application vào database server](#kiểm-tra-kết-nối-database-từ-application-vào-database-server)
+
 Trong project này mình sẽ thực hiện chạy 1 ứng dụng laravel bằng container, sử dụng LEMP (Linux, Nginx, MySQL, PHP-FPM). Toàn bộ các thành phần này sẽ được chạy riêng biệt trên từng container khác nhau
 
 ## Chuẩn bị Laravel source code
@@ -10,8 +20,9 @@ Tất nhiên bạn cũng có thể dùng source code có sẵn của chính mìn
 
 ### Chuẩn bị php và composer
 
-Để tạo project laravel project cần có `composer` và `php`, chúng ta có thể cài đặt 2 thành phần này ở trên máy và sau đó chạy câu lệnh để tạo project, các hướng dẫn này có thể được tìm thấy trên mạng. Mình dùng 1 cách khác là docker
-Đầu tiên mình cần 1 docker image mà trong đó có cả 2 thành phần `php` và `composer`, mình dùng docker để build ra image như mong muốn
+Để tạo project laravel project cần có `composer` và `php`, chúng ta có thể cài đặt 2 thành phần này ở trên máy và sau đó chạy câu lệnh để tạo project, các hướng dẫn này có thể được tìm thấy trên mạng
+
+Mình dùng 1 cách khác là sử dụng docker. Đầu tiên mình cần 1 docker image mà trong đó có cả 2 thành phần `php` và `composer`, sau đó mình dùng docker để build ra image như mong muốn
 
 Dockerfile:
 
@@ -36,9 +47,8 @@ export DOCKER_BUILDKIT=0
 
 ### Chuẩn bị docker volume
 
-Cần có 1 volume để cho server nginx và php sử dụng chung phần source này
+Cần có 1 volume để cho service  `nginx` và `phpfpm` sử dụng chung phần source này
 Vì vậy mình tạo volume như sau
-Nếu dùng docker-compose thì nhớ phải khai báo volume external bên trong `docker-compose.yaml`
 
 ```bash
 docker volume create app-data
@@ -51,6 +61,16 @@ docker volume create app-logss
 ```
 
 Thực tế cần có 1 volume sử dụng để lưu MySQL Server data nữa, nhưng trong ví dụ này mình không sử dụng
+
+Nhớ phải khai báo volume external bên trong `docker-compose.yaml`
+
+```yaml
+volumes:
+  app-data:
+    external: true
+  app-logs:
+    external: true
+```
 
 ### Tạo project laravel
 
@@ -119,11 +139,11 @@ volumes:
 
 ### Một số lưu ý
 
-* Tất cả environment của `docker-compose.yaml` được khai báo bên trong file `.env`
-* 3 container cần có networks chung với nhau
-* Container `nginx` và `phpfpm` cần mount volume chứa source code laravel vào
-* Khai báo environment để MySQL Server có thể start được
-* Khai báo environment trong `phpfpm` service để laravel application có thể kết nối vào MySQL server
+- Tất cả environment của `docker-compose.yaml` được khai báo bên trong file `.env`
+- 3 container cần có networks chung với nhau
+- Container `nginx` và `phpfpm` cần mount volume chứa source code laravel vào
+-Khai báo environment để MySQL Server có thể start được
+- Khai báo environment trong `phpfpm` service để laravel application có thể kết nối vào MySQL server
 
 ## Khởi động ứng dụng
 
