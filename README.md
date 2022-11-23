@@ -45,6 +45,19 @@ Có thể cần disable `DOCKER_BUILDKIT` để build được image
 export DOCKER_BUILDKIT=0
 ```
 
+
+### Tạo project laravel
+
+Sau khi tạo xong image ở trên có tên là `phpwcomposer:v1` (đã bao gồm php và composer như mong muốn)
+
+Mình thực hiện tạo 1 project laravel sample bằng command sau:
+
+```bash
+ docker run -ti -v app-data:/laravel-app phpwcomposer:v1 composer create-project laravel/laravel /laravel-app --prefer-dist
+```
+
+Sau khi tạo project thì dữ liệu của laravel project này nằm bên trong volume `app-data`
+
 ### Chuẩn bị docker volume
 
 Cần có 1 volume để cho service  `nginx` và `phpfpm` sử dụng chung phần source này
@@ -71,16 +84,6 @@ volumes:
   app-logs:
     external: true
 ```
-
-### Tạo project laravel
-
-Sử dụng command sau:
-
-```bash
- docker run -ti -v app-data:/laravel-app phpwcomposer:v3 composer create-project laravel/laravel /laravel-app --prefer-dist
-```
-
-Sau khi tạo project thì dữ liệu của laravel project này nằm bên trong volume `app-data`
 
 ## Chuẩn bị docker-compose file
 
