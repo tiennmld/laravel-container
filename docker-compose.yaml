@@ -26,7 +26,7 @@ services:
     volumes:
       - app-data:/laravel-app
       - ./templates/info.php:/laravel-app/public/info.php
-      - app-logs:/laravel-app/public/storage/logs
+      - app-logs:/laravel-app/storage/logs
     networks:
       - app-networks
 
