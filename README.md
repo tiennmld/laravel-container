@@ -45,10 +45,19 @@ Có thể cần disable `DOCKER_BUILDKIT` để build được image
 export DOCKER_BUILDKIT=0
 ```
 
+### Chuẩn bị application docker volume
+
+Cần có 1 volume chứa dữ liệu source code để để cho service  `nginx` và `phpfpm` có thể mount vào và sử dụng:
+
+Mình tạo volume với command như sau:
+
+```bash
+docker volume create app-data
+```
 
 ### Tạo project laravel
 
-Sau khi tạo xong image ở trên có tên là `phpwcomposer:v1` (đã bao gồm php và composer như mong muốn)
+Sau khi tạo xong image ở trên có tên là `phpwcomposer:v1` (đã bao gồm php và composer như mong muốn) và đã có volume `app-data` để chứa source code
 
 Mình thực hiện tạo 1 project laravel sample bằng command sau:
 
@@ -58,14 +67,7 @@ Mình thực hiện tạo 1 project laravel sample bằng command sau:
 
 Sau khi tạo project thì dữ liệu của laravel project này nằm bên trong volume `app-data`
 
-### Chuẩn bị docker volume
-
-Cần có 1 volume để cho service  `nginx` và `phpfpm` sử dụng chung phần source này
-Vì vậy mình tạo volume như sau
-
-```bash
-docker volume create app-data
-```
+### Chuẩn bị docker volume khác
 
 Nếu bạn cần thêm 1 volume để chứa logs thì có thể tạo thêm 1 volume khác và mount vào đường dẫn `<source_code>/storage/logs`
 
